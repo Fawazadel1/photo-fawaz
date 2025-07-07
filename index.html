@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title>موقع الصور والزواجات</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body {
+      font-family: 'Tahoma', sans-serif;
+      margin: 0;
+      background: #fdf6e3;
+      color: #4d3a1d;
+    }
+    header {
+      background: #bfa15c;
+      color: white;
+      padding: 20px;
+      text-align: center;
+      font-size: 24px;
+      font-weight: bold;
+    }
+    nav {
+      background: #d8bb70;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      padding: 10px;
+    }
+    nav a {
+      color: white;
+      text-decoration: none;
+      margin: 5px 10px;
+      font-weight: bold;
+      padding: 6px 12px;
+      border-radius: 6px;
+      transition: 0.3s;
+    }
+    nav a:hover,
+    nav a.active {
+      background: #a3822d;
+    }
+    main {
+      max-width: 960px;
+      margin: auto;
+      padding: 20px;
+    }
+    section {
+      display: none;
+      background: #fff9e0;
+      border: 1px solid #e5d6ae;
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    section.active {
+      display: block;
+    }
+    h2 {
+      color: #a3822d;
+      border-bottom: 1px solid #e6d8b3;
+      padding-bottom: 10px;
+      margin-bottom: 15px;
+    }
+    input, button {
+      padding: 10px;
+      margin: 5px 0;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      width: 100%;
+      max-width: 400px;
+      box-sizing: border-box;
+    }
+    button {
+      background: #a3822d;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #8f7321;
+    }
+    .image-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      margin-top: 15px;
+    }
+    .image-grid img {
+      max-width: 200px;
+      border: 2px solid #d4bc8d;
+      border-radius: 6px;
+    }
+    .wedding-block {
+      margin-top: 20px;
+      padding: 15px;
+      border-radius: 8px;
+      background: #fffdf2;
+      border: 1px solid #d4bc8d;
+    }
+    .wedding-title {
+      font-weight: bold;
+      font-size: 18px;
+      color: #7a5d1c;
+      margin-bottom: 10px;
+    }
+    footer {
+      text-align: center;
+      padding: 20px;
+      background: #bfa15c;
+      color: white;
+      margin-top: 40px;
+    }
+    .admin-only {
+      display: none;
+    }
+    .admin-visible .admin-only {
+      display: block;
+    }
+    #login-box {
+      text-align: center;
+      margin-top: 30px;
+      margin-bottom: 30px;
+      background: #fffce5;
+      padding: 20px;
+      border: 1px solid #e4d3a0;
+      border-radius: 10px;
+      max-width: 400px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    @media(max-width: 600px) {
+      nav {
+        flex-direction: column;
+        align-items: center;
+      }
+      .image-grid {
+        justify-content: center;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<header>📸 موقع الصور والزواجات</header>
+
+<nav>
+  <a href="#" class="nav-link active" data-target="home">الرئيسية</a>
+  <a href="#" class="nav-link" data-target="gallery">معرض الصور</a>
+  <a href="#" class="nav-link" data-target="weddings">الزواجات</a>
+</nav>
+
+<div id="login-box">
+  <h3>🔐 دخول المدير لإضافة الصور</h3>
+  <input type="password" id="adminPassword" placeholder="كلمة المرور" />
+  <br />
+  <button onclick="login()">دخول</button>
+  <p id="loginMessage" style="color: red;"></p>
+</div>
+
+<main>
+
+  <section id="home" class="active">
+    <h2>🎯 الرئيسية</h2>
+    <p>أهلاً بك في موقع الصور والمناسبات. يمكنك تصفح المعرض والزواجات. لإضافة محتوى، أدخل كلمة المرور الخاصة بالمدير.</p>
+  </section>
+
+  <section id="gallery">
+    <h2>📸 معرض الصور</h2>
+    <div class="admin-only">
+      <input type="file" id="imageInput" accept="image/*" />
+      <button onclick="uploadImage()">رفع صورة</button>
+    </div>
+    <div id="imageContainer" class="image-grid"></div>
+  </section>
+
+  <section id="weddings">
+    <h2>💍 الزواجات</h2>
+    <div class="admin-only">
+      <input type="text" id="weddingName" placeholder="اسم الزواج" />
+      <input type="file" id="weddingImages" accept="image/*" multiple />
+      <button onclick="addWedding()">إضافة الزواج</button>
+    </div>
+    <div id="weddingList"></div>
+  </section>
+
+</main>
+
+<footer>&copy; 2025 جميع الحقوق محفوظة - موقع الصور والزواجات</footer>
+
+<script>
+  const ADMIN_PASSWORD = "admin123";
+
+  function login() {
+    const input = document.getElementById("adminPassword").value;
+    const message = document.getElementById("loginMessage");
+    if (input === ADMIN_PASSWORD) {
+      document.body.classList.add("admin-visible");
+      message.textContent = "✅ تم الدخول بنجاح";
+      message.style.color = "green";
+    } else {
+      message.textContent = "❌ كلمة السر غير صحيحة";
+    }
+  }
+
+  const navLinks = document.querySelectorAll(".nav-link");
+  const sections = document.querySelectorAll("main section");
+
+  navLinks.forEach(link => {
+    link.addEventListener("click", e => {
+      e.preventDefault();
+      navLinks.forEach(l => l.classList.remove("active"));
+      link.classList.add("active");
+
+      sections.forEach(sec => {
+        sec.classList.remove("active");
+        if (sec.id === link.dataset.target) {
+          sec.classList.add("active");
+        }
+      });
+    });
+  });
+
+  function uploadImage() {
+    const input = document.getElementById("imageInput");
+    const container = document.getElementById("imageContainer");
+    if (!input.files.length) return alert("اختر صورة أولاً.");
+    const file = input.files[0];
+    const reader = new FileReader();
+    reader.onload = e => {
+      const img = document.createElement("img");
+      img.src = e.target.result;
+      container.appendChild(img);
+      input.value = "";
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function addWedding() {
+    const name = document.getElementById("weddingName").value.trim();
+    const files = document.getElementById("weddingImages").files;
+    const list = document.getElementById("weddingList");
+    if (!name) return alert("أدخل اسم الزواج.");
+    if (!files.length) return alert("اختر الصور.");
+
+    const block = document.createElement("div");
+    block.className = "wedding-block";
+
+    const title = document.createElement("div");
+    title.className = "wedding-title";
+    title.textContent = name;
+
+    const grid = document.createElement("div");
+    grid.className = "image-grid";
+
+    Array.from(files).forEach(file => {
+      const reader = new FileReader();
+      reader.onload = e => {
+        const img = document.createElement("img");
+        img.src = e.target.result;
+        grid.appendChild(img);
+      };
+      reader.readAsDataURL(file);
+    });
+
+    block.appendChild(title);
+    block.appendChild(grid);
+    list.appendChild(block);
+
+    document.getElementById("weddingName").value = "";
+    document.getElementById("weddingImages").value = "";
+  }
+</script>
+
+</body>
+</html>
